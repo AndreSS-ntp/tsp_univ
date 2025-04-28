@@ -11,8 +11,8 @@ import (
 )
 
 func main() {
-	view := view.ConsoleView{}
-	tsp := controller.TSPController{View: view}
+	view := view.NewConsoleView(60, 20)
+	tsp := controller.NewTSPController(view)
 
 	reader := bufio.NewReader(os.Stdin)
 
@@ -27,22 +27,24 @@ func main() {
 
 		switch choice {
 		case 1:
-			fmt.Print("Введите количество городов: ")
+			fmt.Print("Введите количество городов (2-26): ")
 			countInput, _ := reader.ReadString('\n')
 			count, err := strconv.Atoi(strings.TrimSpace(countInput))
-			if err != nil || count <= 0 {
-				fmt.Println("Ошибка: введите положительное число")
+			if err != nil || count <= 1 || count > 26 {
+				fmt.Println("Ошибка: введите число от 2 до 26")
 				continue
 			}
 			tsp.GenerateRandomCities(count)
-			route, dist := tsp.SolveTSP()
+			route, routeIndices, dist := tsp.SolveTSP()
 			view.DisplayRoute(route, dist)
+			view.DisplayMap(tsp.Cities, routeIndices)
 
 		case 2:
 			tsp.InputCities()
 			if len(tsp.Cities) > 0 {
-				route, dist := tsp.SolveTSP()
+				route, routeIndices, dist := tsp.SolveTSP()
 				view.DisplayRoute(route, dist)
+				view.DisplayMap(tsp.Cities, routeIndices)
 			}
 
 		case 3:

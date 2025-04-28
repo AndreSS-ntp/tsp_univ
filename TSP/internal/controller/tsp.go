@@ -16,6 +16,12 @@ type TSPController struct {
 	Cities []model.City
 }
 
+func NewTSPController(view view.ConsoleView) *TSPController {
+	return &TSPController{
+		View: view,
+	}
+}
+
 func (tc *TSPController) GenerateRandomCities(count int) {
 	tc.Cities = make([]model.City, count)
 	for i := 0; i < count; i++ {
@@ -56,10 +62,10 @@ func (tc *TSPController) InputCities() {
 	tc.View.DisplayCities(tc.Cities)
 }
 
-// Алгоритм ближайшего соседа
-func (tc *TSPController) SolveTSP() ([]model.City, float64) {
+// Алгоритмом ближайшего соседа
+func (tc *TSPController) SolveTSP() ([]model.City, []int, float64) {
 	if len(tc.Cities) == 0 {
-		return nil, 0
+		return nil, nil, 0
 	}
 
 	unvisited := make(map[int]bool)
@@ -68,9 +74,11 @@ func (tc *TSPController) SolveTSP() ([]model.City, float64) {
 	}
 
 	route := make([]model.City, 0, len(tc.Cities))
+	routeIndices := make([]int, 0, len(tc.Cities)+1)
 	current := 0
 	delete(unvisited, current)
 	route = append(route, tc.Cities[current])
+	routeIndices = append(routeIndices, current)
 
 	totalDistance := 0.0
 
@@ -90,11 +98,13 @@ func (tc *TSPController) SolveTSP() ([]model.City, float64) {
 		current = nearest
 		delete(unvisited, current)
 		route = append(route, tc.Cities[current])
+		routeIndices = append(routeIndices, current)
 	}
 
-	// возврат в начальный город
+	// Возвращаемся в начальный город
 	totalDistance += tc.Cities[current].DistanceTo(tc.Cities[0])
 	route = append(route, tc.Cities[0])
+	routeIndices = append(routeIndices, 0)
 
-	return route, totalDistance
+	return route, routeIndices, totalDistance
 }
