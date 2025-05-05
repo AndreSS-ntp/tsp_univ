@@ -11,7 +11,7 @@ import (
 )
 
 func main() {
-	view := view.NewConsoleView(60, 20)
+	view := view.NewConsoleView(100, 50)
 	tsp := controller.NewTSPController(view)
 
 	reader := bufio.NewReader(os.Stdin)
@@ -30,7 +30,7 @@ func main() {
 			fmt.Print("Введите количество городов (2-26): ")
 			countInput, _ := reader.ReadString('\n')
 			count, err := strconv.Atoi(strings.TrimSpace(countInput))
-			if err != nil || count <= 1 || count > 26 {
+			if err != nil || count <= 1 {
 				fmt.Println("Ошибка: введите число от 2 до 26")
 				continue
 			}
